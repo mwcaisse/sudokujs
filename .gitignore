@@ -1,0 +1,8 @@
+# IDEA files
+.idea/
+
+# Node dependencies
+node_modules/
+
+# build
+build/
