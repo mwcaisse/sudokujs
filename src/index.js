@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js"
 
-let type = "WebGL";
+let app = new PIXI.Application({
+    width: 1024,
+    height: 1024,
+    antialias: true
+});
 
-if (!PIXI.utils.isWebGLSupported()) {
-    type = "canvas";
-}
-
-PIXI.utils.sayHello(type);
+document.body.appendChild(app.view);
