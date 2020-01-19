@@ -31,7 +31,7 @@ class Board {
                 let x = xSpacing * i;
                 let y = ySpacing * j;
 
-                this.tiles[i][j] = new Tile(x, y, xSpacing, ySpacing, this.determineBorderType(i, j));
+                this.tiles[i][j] = new Tile(x, y, xSpacing, ySpacing, Board.determineBorderType(i, j));
                 this.tiles[i][j].render(this.container);
             }
         }
