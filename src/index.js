@@ -14,54 +14,61 @@ document.body.style.margin = "0";
 
 document.body.appendChild(app.view);
 
+function determineBorderType(i, j) {
+    let bottom = (j + 1) % 3 === 0,
+        left = i % 3 === 0,
+        right = (i + 1) % 3 === 0,
+        top = j % 3 === 0;
+
+    let border = TileBorder.NONE;
+    if (left && top) {
+        border = TileBorder.TOP_LEFT
+    }
+    else if (left && bottom) {
+        border = TileBorder.BOTTOM_LEFT
+    }
+    else if (left) {
+        border = TileBorder.LEFT;
+    }
+    else if (right && top) {
+        border = TileBorder.TOP_RIGHT;
+    }
+    else if (right && bottom) {
+        border = TileBorder.BOTTOM_RIGHT;
+    }
+    else if (right) {
+        border = TileBorder.RIGHT;
+    }
+    else if (top) {
+        border = TileBorder.TOP;
+    }
+    else if (bottom) {
+        border = TileBorder.BOTTOM;
+    }
+    return border;
+}
 
 function drawBoard(app, x, y, width, height) {
     let xSpacing = width / 9;
     let ySpacing = height / 9;
 
-    let xOffset = x;
-    let yOffset = y;
+    let boardContainer = new PIXI.Container()
+    boardContainer.x = x;
+    boardContainer.y = y;
+    boardContainer.width = width;
+    boardContainer.height = height;
 
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
             let x = xSpacing * i;
             let y = ySpacing * j;
 
-            let bottom = (j + 1) % 3 === 0,
-                left = i % 3 === 0,
-                right = (i + 1) % 3 === 0,
-                top = j % 3 === 0;
-
-            let border = TileBorder.NONE;
-            if (left && top) {
-                border = TileBorder.TOP_LEFT
-            }
-            else if (left && bottom) {
-                border = TileBorder.BOTTOM_LEFT
-            }
-            else if (left) {
-                border = TileBorder.LEFT;
-            }
-            else if (right && top) {
-                border = TileBorder.TOP_RIGHT;
-            }
-            else if (right && bottom) {
-                border = TileBorder.BOTTOM_RIGHT;
-            }
-            else if (right) {
-                border = TileBorder.RIGHT;
-            }
-            else if (top) {
-                border = TileBorder.TOP;
-            }
-            else if (bottom) {
-                border = TileBorder.BOTTOM;
-            }
-
-            let tile = new Tile(x + xOffset, y + yOffset, xSpacing, ySpacing, border);
-            tile.render(app);
+            let tile = new Tile(x, y, xSpacing, ySpacing, determineBorderType(i, j));
+            tile.render(boardContainer);
         }
     }
+
+    app.stage.addChild(boardContainer);
 }
 
 /*eslint-disable max-lines-per-function */

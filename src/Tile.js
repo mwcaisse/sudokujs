@@ -24,13 +24,13 @@ class Tile {
         this.borderWidth = 4;
     }
 
-    render(app) {
-        this.drawLine(app, this.x, this.y, this.x, this.height + this.y, this.determineColor(TileBorder.LEFT));
-        this.drawLine(app, this.x + this.width, this.y, this.x + this.width, this.height + this.y,
+    render(container) {
+        this.drawLine(container, this.x, this.y, this.x, this.height + this.y, this.determineColor(TileBorder.LEFT));
+        this.drawLine(container, this.x + this.width, this.y, this.x + this.width, this.height + this.y,
             this.determineColor(TileBorder.RIGHT));
 
-        this.drawLine(app, this.x, this.y, this.x + this.width, this.y, this.determineColor(TileBorder.TOP));
-        this.drawLine(app, this.x, this.y + this.height, this.x + this.width, this.y + this.height,
+        this.drawLine(container, this.x, this.y, this.x + this.width, this.y, this.determineColor(TileBorder.TOP));
+        this.drawLine(container, this.x, this.y + this.height, this.x + this.width, this.y + this.height,
             this.determineColor(TileBorder.BOTTOM));
     }
 
@@ -42,12 +42,12 @@ class Tile {
         return 0x666666;
     }
 
-    drawLine(app, startX, startY, endX, endY, color) {
+    drawLine(container, startX, startY, endX, endY, color) {
         let line = new PIXI.Graphics();
         line.lineStyle(this.borderWidth, color, 1);
         line.moveTo(startX, startY);
         line.lineTo(endX, endY);
-        app.stage.addChild(line);
+        container.addChild(line);
     }
 }
 
