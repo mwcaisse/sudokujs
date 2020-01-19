@@ -22,6 +22,14 @@ class Tile {
         this.border = border;
 
         this.borderWidth = 4;
+
+        this.number = 2;
+
+        this.textStyle = new PIXI.TextStyle({
+            fill: 0x7F7FFF,
+            fontWeight: "bolder",
+            fontSize: "75px"
+        });
     }
 
     render(container) {
@@ -32,6 +40,13 @@ class Tile {
         this.drawLine(container, this.x, this.y, this.x + this.width, this.y, this.determineColor(TileBorder.TOP));
         this.drawLine(container, this.x, this.y + this.height, this.x + this.width, this.y + this.height,
             this.determineColor(TileBorder.BOTTOM));
+
+        if (this.number) {
+            let text = new PIXI.Text(this.number, this.textStyle);
+            text.anchor.set(0.5);
+            text.position.set(this.x + (this.width / 2.0), this.y + (this.height / 2.0));
+            container.addChild(text);
+        }
     }
 
 
@@ -48,6 +63,14 @@ class Tile {
         line.moveTo(startX, startY);
         line.lineTo(endX, endY);
         container.addChild(line);
+    }
+
+    setNumber(number) {
+        this.number = number;
+    }
+
+    clearNumber() {
+        this.number = null;
     }
 }
 
