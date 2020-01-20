@@ -93,8 +93,14 @@ class Tile {
 
         window.addEventListener("keyup", event => {
             let numKey = parseInt(event.key, 10);
-            if (!this.gameNumber && this.selected && numKey > 0) {
-                this.setNumber(numKey, false);
+            if (!this.gameNumber && this.selected) {
+                console.log(numKey);
+                if (numKey === 0 || numKey === this.number) {
+                    this.clearNumber();
+                }              
+                else {
+                    this.setNumber(numKey, false);
+                }
             }
         });
     }
@@ -126,10 +132,14 @@ class Tile {
         if (this.numberText) {
             this.numberText.text = number;
         }
+        if (this.gameNumber) {
+            this.textStyle.fill = 0xFFFFFF;
+        }
     }
 
     clearNumber() {
         this.number = null;
+        this.numberText.text = "";
     }
 }
 
