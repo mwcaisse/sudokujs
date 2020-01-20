@@ -23,7 +23,7 @@ class Tile {
 
         this.borderWidth = 4;
 
-        this.number = 2;
+        this.number = null;
 
         this.textStyle = new PIXI.TextStyle({
             fill: 0x7F7FFF,

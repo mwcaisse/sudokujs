@@ -15,6 +15,10 @@ module.exports = {
                     'file-loader',
                 ],
             },
+            {
+                test: /\.gme$/,
+                use: "raw-loader"
+            }
         ]
     },
     plugins: [

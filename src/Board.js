@@ -1,6 +1,8 @@
 import {Tile, TileBorder} from "@app/Tile";
 import * as PIXI from "pixi.js";
 
+import TestGame from "@app/assets/games/test.gme"
+
 class Board {
 
     constructor(x, y, width, height) {
@@ -25,6 +27,11 @@ class Board {
         let xSpacing = this.width / this.rows;
         let ySpacing = this.height / this.cols;
 
+        let numbers = this.parseBoard(TestGame);
+
+        console.log(TestGame);
+        console.log(numbers);
+
         for (let i = 0; i < this.rows; i++) {
             this.tiles[i] = new Array(this.cols);
             for (let j = 0; j < this.cols; j++) {
@@ -32,9 +39,30 @@ class Board {
                 let y = ySpacing * j;
 
                 this.tiles[i][j] = new Tile(x, y, xSpacing, ySpacing, Board.determineBorderType(i, j));
+
+                if (numbers[j][i] >= 1) {
+                    this.tiles[i][j].setNumber(numbers[j][i]);
+                }
+
                 this.tiles[i][j].render(this.container);
             }
         }
+
+    }
+
+    parseBoard(gameString) {
+        let numbers = new Array(this.rows);
+
+        let rows = gameString.split("\n");
+        for (let i = 0; i < this.rows; i++) {
+            numbers[i] = new Array(this.cols);
+            let cols = rows[i].split(" ");
+            for (let j = 0; j < this.cols; j++) {
+                numbers[i][j] = parseInt(cols[j], 10);
+            }
+        }
+
+        return numbers;
     }
 
     render(container) {
