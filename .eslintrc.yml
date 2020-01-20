@@ -17,7 +17,7 @@ rules:
   array-callback-return: error
   array-element-newline: error
   arrow-body-style: error
-  arrow-parens: ["error", "as-needed", {"requireForBlockBody": true}]
+  arrow-parens: ["error", "as-needed", {"requireForBlockBody": false}]
   arrow-spacing: error
   block-scoped-var: error
   block-spacing: error

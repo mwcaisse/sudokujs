@@ -29,9 +29,6 @@ class Board {
 
         let numbers = this.parseBoard(TestGame);
 
-        console.log(TestGame);
-        console.log(numbers);
-
         for (let i = 0; i < this.rows; i++) {
             this.tiles[i] = new Array(this.cols);
             for (let j = 0; j < this.cols; j++) {
@@ -39,12 +36,11 @@ class Board {
                 let y = ySpacing * j;
 
                 this.tiles[i][j] = new Tile(x, y, xSpacing, ySpacing, Board.determineBorderType(i, j));
+                this.tiles[i][j].render(this.container);
 
                 if (numbers[j][i] >= 1) {
-                    this.tiles[i][j].setNumber(numbers[j][i]);
+                    this.tiles[i][j].setNumber(numbers[j][i], true);
                 }
-
-                this.tiles[i][j].render(this.container);
             }
         }
 
