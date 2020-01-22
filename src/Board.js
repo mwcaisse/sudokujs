@@ -1,4 +1,4 @@
-import {Tile, TileBorder} from "@app/Tile";
+import {Tile, TileBorder, TileEvent} from "@app/Tile";
 import * as PIXI from "pixi.js";
 
 import TestGame from "@app/assets/games/test.gme"
@@ -41,6 +41,14 @@ class Board {
                 if (numbers[j][i] >= 1) {
                     this.tiles[i][j].setNumber(numbers[j][i], true);
                 }
+
+                this.tiles[i][j].on(TileEvent.NUMBER_SET, event => {
+                    this.onTileNumberChanged(TileEvent.NUMBER_SET, event);
+                });
+
+                this.tiles[i][j].on(TileEvent.NUMBER_CLEARED, () => {
+                    this.onTileNumberChanged(TileEvent.NUMBER_CLEARED);
+                });
             }
         }
 
@@ -59,6 +67,64 @@ class Board {
         }
 
         return numbers;
+    }
+
+    /**
+     * Check if the board has any errors
+     */
+
+    validateBoard() {
+        //Check columns
+        for (let i = 0; i < this.rows; i++) {
+            let colSet = new Set();
+            let error = false;
+            for (let j=0; j < this.cols; j++) {
+                let tile = this.tiles[i][j];
+                if (tile.number < 1) {
+                    continue;
+                }
+                if (colSet.has(tile.number)) {
+                    error = true;
+                }
+                colSet.add(tile.number);
+            }
+
+            if (error) {
+                console.log("Col: " + (i + 1) + " has error!");
+                for (let j=0; j < this.cols; j++) {
+                    this.tiles[i][j].setError(error);
+                }
+            }
+        }
+
+        //Check rows
+        for (let j = 0; j < this.cols; j++) {
+            let rowSet = new Set();
+            let error = false;
+            for (let i=0; i < this.rows; i++) {
+                let tile = this.tiles[i][j];
+                if (tile.number < 1) {
+                    continue;
+                }
+                if (rowSet.has(tile.number)) {
+                    error = true;
+                }
+                rowSet.add(tile.number);
+            }
+
+            if (error) {
+                console.log("Row: " + (j + 1) + " has error!");
+                for (let i=0; i < this.cols; i++) {
+                    this.tiles[i][j].setError(error);
+                }
+            }
+        }
+
+        //Check squares 3x3
+    }
+
+    onTileNumberChanged() {
+        this.validateBoard();
     }
 
     render(container) {

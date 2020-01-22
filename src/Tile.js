@@ -12,9 +12,15 @@ const TileBorder = Object.freeze({
     NONE: "none"
 });
 
-class Tile {
+const TileEvent = Object.freeze({
+    NUMBER_CLEARED: "number_cleared",
+    NUMBER_SET: "number_set"
+});
+
+class Tile extends PIXI.utils.EventEmitter {
 
     constructor(x, y, width, height, border=TileBorder.NONE) {
+        super();
         this.x = x;
         this.y = y;
         this.width = width;
@@ -40,6 +46,7 @@ class Tile {
 
         this.init();
         this.initClickEvents();
+        this.initEventListeners();
     }
 
     init() {
@@ -105,10 +112,27 @@ class Tile {
         });
     }
 
+    initEventListeners() {
+        this.on(TileEvent.NUMBER_CLEARED, () => {
+            this.number = null;
+            this.numberText.text = "";
+        });
+        this.on(TileEvent.NUMBER_SET, event => {
+            this.number = event.number;
+            this.gameNumber = event.gameNumber;
+
+            if (this.numberText) {
+                this.numberText.text = this.number;
+            }
+            if (this.gameNumber) {
+                this.textStyle.fill = 0xFFFFFF;
+            }
+        });
+    }
+
     render(container) {
         container.addChild(this.container);
     }
-
 
     determineColor(linePlacement) {
         if (this.border.includes(linePlacement)) {
@@ -126,23 +150,29 @@ class Tile {
     }
 
     setNumber(number, gameNumber = false) {
-        this.number = number;
-        this.gameNumber = gameNumber;
-
-        if (this.numberText) {
-            this.numberText.text = number;
-        }
-        if (this.gameNumber) {
-            this.textStyle.fill = 0xFFFFFF;
-        }
+        this.emit(TileEvent.NUMBER_SET, {
+            number: number,
+            gameNumber: gameNumber
+        });
     }
 
     clearNumber() {
-        this.number = null;
-        this.numberText.text = "";
+        this.emit(TileEvent.NUMBER_CLEARED);
     }
+
+    setError(error) {
+        if (error) {
+            this.background.alpha = 0.75;
+        }
+        else {
+            this.background.alpha = 0;
+        }
+
+    }
+
+
 }
 
 export {
-    Tile, TileBorder
+    Tile, TileBorder, TileEvent
 }
