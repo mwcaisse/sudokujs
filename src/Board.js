@@ -72,10 +72,13 @@ class Board {
     /**
      * Check if the board has any errors
      */
-
+    /*eslint-disable max-lines-per-function */
     validateBoard() {
+        let errors = new Array(this.rows);
+
         //Check columns
         for (let i = 0; i < this.rows; i++) {
+            errors[i] = new Array(this.cols);
             let colSet = new Set();
             let error = false;
             for (let j=0; j < this.cols; j++) {
@@ -85,6 +88,7 @@ class Board {
                 }
                 if (colSet.has(tile.number)) {
                     error = true;
+                    break;
                 }
                 colSet.add(tile.number);
             }
@@ -92,7 +96,7 @@ class Board {
             if (error) {
                 console.log("Col: " + (i + 1) + " has error!");
                 for (let j=0; j < this.cols; j++) {
-                    this.tiles[i][j].setError(error);
+                    errors[i][j] = true;
                 }
             }
         }
@@ -108,6 +112,7 @@ class Board {
                 }
                 if (rowSet.has(tile.number)) {
                     error = true;
+                    break;
                 }
                 rowSet.add(tile.number);
             }
@@ -115,12 +120,18 @@ class Board {
             if (error) {
                 console.log("Row: " + (j + 1) + " has error!");
                 for (let i=0; i < this.cols; i++) {
-                    this.tiles[i][j].setError(error);
+                    errors[i][j] = true;
                 }
             }
         }
 
         //Check squares 3x3
+
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.tiles[i][j].setError(errors[i][j] === true);
+            }
+        }
     }
 
     onTileNumberChanged() {

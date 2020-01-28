@@ -44,6 +44,8 @@ class Tile extends PIXI.utils.EventEmitter {
 
         this.selected = false;
 
+        this.error = false;
+
         this.init();
         this.initClickEvents();
         this.initEventListeners();
@@ -89,11 +91,11 @@ class Tile extends PIXI.utils.EventEmitter {
                     event.clientY <= (pos.y + this.container.height)) {
 
                     this.selected = true;
-                    this.background.alpha = 0.75;
+                    this.updateBackground();
                 }
                 else if (this.selected) {
                     this.selected = false;
-                    this.background.alpha = 0;
+                    this.updateBackground();
                 }
             }
         });
@@ -161,13 +163,17 @@ class Tile extends PIXI.utils.EventEmitter {
     }
 
     setError(error) {
-        if (error) {
+        this.error = error;
+        this.updateBackground();
+    }
+
+    updateBackground() {
+        if (this.error || this.selected) {
             this.background.alpha = 0.75;
         }
         else {
             this.background.alpha = 0;
         }
-
     }
 
 
