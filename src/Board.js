@@ -73,26 +73,39 @@ class Board {
      * Check if the board has any errors
      */
     /*eslint-disable max-lines-per-function */
+    /*eslint-disable max-depth*/
+    /*eslint-disable complexity */
     validateBoard() {
         let errors = new Array(this.rows);
+        let squareSize = 3;
 
         //Check columns
         for (let i = 0; i < this.rows; i++) {
             errors[i] = new Array(this.cols);
-            let colSet = new Set();
+            let colSets = new Array(squareSize);
+
+            for (let a = 0; a < squareSize; a++) {
+                colSets[a] = new Set();
+            }
+
             let error = false;
             for (let j=0; j < this.cols; j++) {
                 let tile = this.tiles[i][j];
                 if (tile.number < 1) {
                     continue;
                 }
-                if (colSet.has(tile.number)) {
-                    error = true;
-                    break;
-                }
-                colSet.add(tile.number);
+                colSets[Math.floor(j / squareSize)].add(tile.number);
             }
 
+            let common = new Set();
+            for (let s of [...colSets]) {
+                for (let num of [...s]) {
+                    if (common.has(num)) {
+                        error = true;
+                    }
+                    common.add(num)
+                }
+            }
             if (error) {
                 console.log("Col: " + (i + 1) + " has error!");
                 for (let j=0; j < this.cols; j++) {
@@ -103,18 +116,29 @@ class Board {
 
         //Check rows
         for (let j = 0; j < this.cols; j++) {
-            let rowSet = new Set();
+            let rowSets = new Array(squareSize);
+
+            for (let a= 0; a < squareSize; a++) {
+                rowSets[a] = new Set();
+            }
+
             let error = false;
             for (let i=0; i < this.rows; i++) {
                 let tile = this.tiles[i][j];
                 if (tile.number < 1) {
                     continue;
                 }
-                if (rowSet.has(tile.number)) {
-                    error = true;
-                    break;
+                rowSets[Math.floor(i/squareSize)].add(tile.number);
+            }
+
+            let common = new Set();
+            for (let s of [...rowSets]) {
+                for (let num of [...s]) {
+                    if (common.has(num)) {
+                        error = true;
+                    }
+                    common.add(num)
                 }
-                rowSet.add(tile.number);
             }
 
             if (error) {
@@ -126,6 +150,35 @@ class Board {
         }
 
         //Check squares 3x3
+        for (let i = 0; i < this.rows / squareSize; i++) {
+            for (let j = 0; j < this.cols / squareSize; j++) {
+                let error = false;
+                let squareSet = new Set();
+
+                for (let si = 0; si < squareSize; si++) {
+                    for (let sj = 0; sj < squareSize; sj++) {
+                        let tile = this.tiles[(i * squareSize) + si][(j * squareSize) + sj]
+                        if (tile.number < 1) {
+                            continue;
+                        }
+                        if (squareSet.has(tile.number)) {
+                            error = true;
+                        }
+                        squareSet.add(tile.number);
+                    }
+                }
+
+                if (error) {
+                    console.log("Square: (" + i + ", " + j + ") has error!");
+                    for (let si = 0; si < squareSize; si++) {
+                        for (let sj = 0; sj < squareSize; sj++) {
+                            errors[(i * squareSize) + si][(j * squareSize) + sj] = true;
+                        }
+                    }
+                }
+
+            }
+        }
 
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
