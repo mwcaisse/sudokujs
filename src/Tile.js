@@ -154,6 +154,10 @@ class Tile extends PIXI.utils.EventEmitter {
                 this.relatedSelected = true;
                 this.updateBackground();
             }
+            if (this.relatedSelected && this.number !== event.number) {
+                this.relatedSelected = false;
+                this.updateBackground();
+            }
         });
         this.board.on(TileEvent.NUMBER_UNSELECTED, event => {
             if (this.number === event.number) {
@@ -204,6 +208,9 @@ class Tile extends PIXI.utils.EventEmitter {
     }
 
     clearNumber() {
+        this.board.emit(TileEvent.NUMBER_UNSELECTED, {
+            number: this.number
+        });
         this.emit(TileEvent.NUMBER_CLEARED);
     }
 
