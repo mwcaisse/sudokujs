@@ -39,7 +39,8 @@ class Tile extends PIXI.utils.EventEmitter {
         });
 
         this.container = new PIXI.Container();
-        this.background = new PIXI.Graphics();
+        this.selectedBackground = new PIXI.Graphics();
+        this.errorBackground = new PIXI.Graphics();
         this.numberText = null;
 
         this.selected = false;
@@ -58,11 +59,15 @@ class Tile extends PIXI.utils.EventEmitter {
         this.container.height = this.height;
         this.container.interactive = true;
 
-        this.background.alpha = 0;
-        this.background.beginFill(0x4a5e80, 1);
-        this.background.drawRect(0, 0, this.width, this.height);
+        this.selectedBackground.alpha = 0;
+        this.selectedBackground.beginFill(0x4a5e80, 1);
+        this.selectedBackground.drawRect(0, 0, this.width, this.height);
+        this.container.addChild(this.selectedBackground);
 
-        this.container.addChild(this.background);
+        this.errorBackground.alpha = 0;
+        this.errorBackground.beginFill(0xcd5c5c, 1);
+        this.errorBackground.drawRect(0, 0, this.width, this.height);
+        this.container.addChild(this.errorBackground);
 
         this.drawLine(this.container, 0, 0, 0, this.height, this.determineColor(TileBorder.LEFT));
         this.drawLine(this.container, this.width, 0, this.width, this.height,
@@ -168,11 +173,21 @@ class Tile extends PIXI.utils.EventEmitter {
     }
 
     updateBackground() {
-        if (this.error || this.selected) {
-            this.background.alpha = 0.75;
+        if (this.error) {
+            this.errorBackground.alpha = 0.65;
         }
         else {
-            this.background.alpha = 0;
+            this.errorBackground.alpha = 0;
+        }
+
+        if (this.selected && this.error) {
+            this.selectedBackground.alpha = 1;
+        }
+        else if (this.selected) {
+            this.selectedBackground.alpha = 0.75;
+        }
+        else {
+            this.selectedBackground.alpha = 0;
         }
     }
 
