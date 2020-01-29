@@ -3,9 +3,10 @@ import * as PIXI from "pixi.js";
 
 import TestGame from "@app/assets/games/test.gme"
 
-class Board {
+class Board extends PIXI.utils.EventEmitter {
 
     constructor(x, y, width, height) {
+        super();
         this.x = x;
         this.y = y;
         this.width = width;
@@ -35,7 +36,7 @@ class Board {
                 let x = xSpacing * i;
                 let y = ySpacing * j;
 
-                this.tiles[i][j] = new Tile(x, y, xSpacing, ySpacing, Board.determineBorderType(i, j));
+                this.tiles[i][j] = new Tile(this, x, y, xSpacing, ySpacing, Board.determineBorderType(i, j));
                 this.tiles[i][j].render(this.container);
 
                 if (numbers[j][i] >= 1) {

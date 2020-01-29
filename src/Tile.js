@@ -14,13 +14,16 @@ const TileBorder = Object.freeze({
 
 const TileEvent = Object.freeze({
     NUMBER_CLEARED: "number_cleared",
-    NUMBER_SET: "number_set"
+    NUMBER_SET: "number_set",
+    NUMBER_SELECTED: "number_selected",
+    NUMBER_UNSELECTED: "number_unselected"
 });
 
 class Tile extends PIXI.utils.EventEmitter {
 
-    constructor(x, y, width, height, border=TileBorder.NONE) {
+    constructor(board, x, y, width, height, border=TileBorder.NONE) {
         super();
+        this.board = board;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -44,7 +47,7 @@ class Tile extends PIXI.utils.EventEmitter {
         this.numberText = null;
 
         this.selected = false;
-
+        this.relatedSelected = false;
         this.error = false;
 
         this.init();
@@ -96,10 +99,21 @@ class Tile extends PIXI.utils.EventEmitter {
                     event.clientY <= (pos.y + this.container.height)) {
 
                     this.selected = true;
+                    if (this.number > 0) {
+                        this.board.emit(TileEvent.NUMBER_SELECTED, {
+                            number: this.number
+                        });
+                    }
                     this.updateBackground();
+
                 }
                 else if (this.selected) {
                     this.selected = false;
+                    if (this.number > 0) {
+                        this.board.emit(TileEvent.NUMBER_UNSELECTED, {
+                            number: this.number
+                        });
+                    }
                     this.updateBackground();
                 }
             }
@@ -135,6 +149,18 @@ class Tile extends PIXI.utils.EventEmitter {
                 this.textStyle.fill = 0xFFFFFF;
             }
         });
+        this.board.on(TileEvent.NUMBER_SELECTED, event => {
+            if (this.number === event.number && !this.selected) {
+                this.relatedSelected = true;
+                this.updateBackground();
+            }
+        });
+        this.board.on(TileEvent.NUMBER_UNSELECTED, event => {
+            if (this.number === event.number) {
+                this.relatedSelected = false;
+                this.updateBackground();
+            }
+        })
     }
 
     render(container) {
@@ -157,10 +183,24 @@ class Tile extends PIXI.utils.EventEmitter {
     }
 
     setNumber(number, gameNumber = false) {
+        var oldNumber = this.number;
         this.emit(TileEvent.NUMBER_SET, {
             number: number,
             gameNumber: gameNumber
         });
+        if (this.selected && gameNumber == false) {
+            if (this.number > 0) {
+                this.board.emit(TileEvent.NUMBER_SELECTED, {
+                    number: number
+                });
+            }
+            else {
+                this.board.emit(TileEvent.NUMBER_UNSELECTED, {
+                    number: oldNumber
+                });
+            }
+
+        }
     }
 
     clearNumber() {
@@ -185,6 +225,12 @@ class Tile extends PIXI.utils.EventEmitter {
         }
         else if (this.selected) {
             this.selectedBackground.alpha = 0.75;
+        }
+        else if (this.relatedSelected && this.error) {
+            this.selectedBackground.alpha = 0.75;
+        }
+        else if (this.relatedSelected) {
+            this.selectedBackground.alpha = 0.5;
         }
         else {
             this.selectedBackground.alpha = 0;
