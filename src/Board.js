@@ -79,6 +79,7 @@ class Board extends PIXI.utils.EventEmitter {
     validateBoard() {
         let errors = new Array(this.rows);
         let squareSize = 3;
+        let valid = true;
 
         //Check columns
         for (let i = 0; i < this.rows; i++) {
@@ -108,6 +109,7 @@ class Board extends PIXI.utils.EventEmitter {
                 }
             }
             if (error) {
+                valid = false;
                 console.log("Col: " + (i + 1) + " has error!");
                 for (let j=0; j < this.cols; j++) {
                     errors[i][j] = true;
@@ -143,6 +145,7 @@ class Board extends PIXI.utils.EventEmitter {
             }
 
             if (error) {
+                valid = false;
                 console.log("Row: " + (j + 1) + " has error!");
                 for (let i=0; i < this.cols; i++) {
                     errors[i][j] = true;
@@ -170,6 +173,7 @@ class Board extends PIXI.utils.EventEmitter {
                 }
 
                 if (error) {
+                    valid = false;
                     console.log("Square: (" + i + ", " + j + ") has error!");
                     for (let si = 0; si < squareSize; si++) {
                         for (let sj = 0; sj < squareSize; sj++) {
@@ -186,10 +190,34 @@ class Board extends PIXI.utils.EventEmitter {
                 this.tiles[i][j].setError(errors[i][j] === true);
             }
         }
+
+        return valid;
+    }
+
+    checkGameFinished(boardValid) {
+        if (!boardValid) {
+            return false;
+        }
+
+        //If the board is valid and every square has a number in it, then the game is finished
+
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j< this.cols; j++) {
+                if (!this.tiles[i][j].hasNumber()) {
+                    return false;
+                }
+            }
+        }
+
+        //eslint-disable-next-line no-alert
+        alert("Yay! You finished the game biiiitch.");
+
+        return true;
     }
 
     onTileNumberChanged() {
-        this.validateBoard();
+        let isValid = this.validateBoard();
+        this.checkGameFinished(isValid);
     }
 
     render(container) {

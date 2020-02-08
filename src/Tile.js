@@ -99,7 +99,7 @@ class Tile extends PIXI.utils.EventEmitter {
                     event.clientY <= (pos.y + this.container.height)) {
 
                     this.selected = true;
-                    if (this.number > 0) {
+                    if (this.hasNumber()) {
                         this.board.emit(TileEvent.NUMBER_SELECTED, {
                             number: this.number
                         });
@@ -109,7 +109,7 @@ class Tile extends PIXI.utils.EventEmitter {
                 }
                 else if (this.selected) {
                     this.selected = false;
-                    if (this.number > 0) {
+                    if (this.hasNumber()) {
                         this.board.emit(TileEvent.NUMBER_UNSELECTED, {
                             number: this.number
                         });
@@ -192,8 +192,8 @@ class Tile extends PIXI.utils.EventEmitter {
             number: number,
             gameNumber: gameNumber
         });
-        if (this.selected && gameNumber == false) {
-            if (this.number > 0) {
+        if (this.selected && gameNumber === false) {
+            if (this.hasNumber()) {
                 this.board.emit(TileEvent.NUMBER_SELECTED, {
                     number: number
                 });
@@ -212,6 +212,10 @@ class Tile extends PIXI.utils.EventEmitter {
             number: this.number
         });
         this.emit(TileEvent.NUMBER_CLEARED);
+    }
+
+    hasNumber() {
+        return this.number > 0;
     }
 
     setError(error) {
